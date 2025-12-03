@@ -5,7 +5,6 @@ import {
   Typography,
   IconButton,
   TextField,
-  Button,
   Chip,
   useTheme,
 } from '@mui/material'
@@ -15,7 +14,6 @@ import {
   Remove,
   LocationOn,
   AccessTime,
-  LocalOffer,
 } from '@mui/icons-material'
 import { CartItem as CartItemType } from '../types'
 import { motion } from 'framer-motion'

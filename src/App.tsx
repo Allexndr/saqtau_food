@@ -1,6 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
 import { Box } from '@mui/material'
-import { useTranslation } from 'react-i18next'
 import Navigation from './components/Navigation'
 import HomePage from './pages/HomePage'
 import MapPage from './pages/MapPage'
@@ -14,8 +13,6 @@ import PartnerPanel from './pages/PartnerPanel'
 import './App.css'
 
 function App() {
-  const { i18n } = useTranslation()
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navigation />

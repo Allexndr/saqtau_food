@@ -8,7 +8,6 @@ import {
   Chip,
   Box,
   IconButton,
-  Tooltip,
   useTheme,
   Skeleton,
 } from '@mui/material'
@@ -18,10 +17,8 @@ import {
   ShoppingCart,
   LocationOn,
   AccessTime,
-  LocalOffer,
 } from '@mui/icons-material'
-import { useTranslation } from 'react-i18next'
-import { Product } from '../types'
+import type { Product } from '../types'
 import { useCart } from '../hooks/useCart'
 import { motion } from 'framer-motion'
 
@@ -32,7 +29,6 @@ interface ProductCardProps {
 
 const ProductCard = ({ product, onViewDetails }: ProductCardProps) => {
   const theme = useTheme()
-  const { t } = useTranslation()
   const { addToCart } = useCart()
   const [isFavorite, setIsFavorite] = useState(false)
   const [imageLoaded, setImageLoaded] = useState(false)

@@ -25,21 +25,18 @@ import {
 } from '@mui/material'
 import {
   Person,
-  Payment,
   CheckCircle,
   ArrowBack,
   ArrowForward,
   CreditCard,
-  AccountBalance,
   Money,
-  LocationOn,
   Phone,
   Email,
 } from '@mui/icons-material'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '../hooks/useCart'
-import { Order } from '../types'
+import type { Order } from '../types'
 
 const steps = ['Контакты', 'Оплата', 'Подтверждение']
 

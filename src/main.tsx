@@ -15,7 +15,7 @@ createRoot(document.getElementById('root')!).render(
       <CssBaseline />
       <CartProvider>
         <BrowserRouter>
-          <App />
+    <App />
         </BrowserRouter>
       </CartProvider>
     </ThemeProvider>

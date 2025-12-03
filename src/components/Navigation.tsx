@@ -29,8 +29,6 @@ import {
   Person,
   Business,
   Language,
-  Brightness4,
-  Brightness7,
 } from '@mui/icons-material'
 import { useTranslation } from 'react-i18next'
 import { useCart } from '../hooks/useCart'

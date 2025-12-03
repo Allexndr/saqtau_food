@@ -1,5 +1,5 @@
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react'
-import { Cart, CartItem, Product } from '../types'
+import React, { useState, useEffect, createContext, useContext, type ReactNode } from 'react'
+import type { Cart, CartItem, Product } from '../types'
 
 interface CartContextType {
   cart: Cart | null
@@ -222,9 +222,5 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     getTotalPrice,
   }
 
-  return (
-    <CartContext.Provider value={value}>
-      {children}
-    </CartContext.Provider>
-  )
+  return React.createElement(CartContext.Provider, { value }, children)
 }

@@ -19,7 +19,6 @@ import {
   Checkroom,
   TrendingUp,
   People,
-  Eco,
   LocationOn,
 } from '@mui/icons-material'
 import { useTranslation } from 'react-i18next'
@@ -56,7 +55,7 @@ const HomePage = () => {
 
   const stats = [
     {
-      icon: <Eco sx={{ fontSize: 40, color: theme.palette.success.main }} />,
+      icon: <TrendingUp sx={{ fontSize: 40, color: theme.palette.success.main }} />,
       value: '25,000+',
       label: t('hero.stats.saved'),
       color: theme.palette.success.main,
