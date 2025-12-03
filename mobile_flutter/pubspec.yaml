@@ -81,6 +81,9 @@ dependencies:
   share_plus: ^10.0.2
   connectivity_plus: ^6.0.5
 
+  # Notifications - HCI: Emotional Interaction - Local notifications
+  flutter_local_notifications: ^17.2.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

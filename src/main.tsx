@@ -8,6 +8,10 @@ import { CartProvider } from './hooks/useCart'
 import './utils/i18n'
 import './index.css'
 import App from './App.tsx'
+import NotificationService from './services/notificationService'
+
+// Initialize notifications
+NotificationService.initialize()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

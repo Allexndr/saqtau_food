@@ -33,9 +33,39 @@ export class Partner extends Model<PartnerType> implements PartnerType {
   public is_active!: boolean;
   public readonly created_at!: Date;
   public readonly updated_at!: Date;
+
+  // HCI: Data Gathering - Additional seller profile fields for comprehensive management
+  public owner_name?: string;
+  public tax_id?: string;
+  public bank_details?: {
+    bank_name: string;
+    account_number: string;
+    bik: string;
+  };
+  public documents?: {
+    certificate_url?: string;
+    license_url?: string;
+    tax_certificate_url?: string;
+  };
+  public settings?: {
+    auto_confirm_orders: boolean;
+    notification_preferences: {
+      new_orders: boolean;
+      low_stock: boolean;
+      reviews: boolean;
+    };
+    commission_rate: number; // Override default 15%
+  };
+  public stats?: {
+    total_products: number;
+    total_orders: number;
+    total_revenue: number;
+    average_rating: number;
+    products_sold: number;
+  };
 }
 
-Partner.init(
+  Partner.init(
   {
     id: {
       type: DataTypes.UUID,
@@ -93,6 +123,45 @@ Partner.init(
     is_active: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
+    },
+    // Enhanced seller profile fields
+    owner_name: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    tax_id: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+    },
+    bank_details: {
+      type: DataTypes.JSONB,
+      allowNull: true,
+    },
+    documents: {
+      type: DataTypes.JSONB,
+      allowNull: true,
+    },
+    settings: {
+      type: DataTypes.JSONB,
+      defaultValue: {
+        auto_confirm_orders: false,
+        notification_preferences: {
+          new_orders: true,
+          low_stock: true,
+          reviews: true,
+        },
+        commission_rate: 15,
+      },
+    },
+    stats: {
+      type: DataTypes.JSONB,
+      defaultValue: {
+        total_products: 0,
+        total_orders: 0,
+        total_revenue: 0,
+        average_rating: 0,
+        products_sold: 0,
+      },
     },
   },
   {

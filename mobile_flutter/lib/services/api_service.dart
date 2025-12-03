@@ -306,4 +306,76 @@ class ApiService {
       print('Analytics tracking failed: $e');
     }
   }
+
+  // Notifications - HCI: Emotional Interaction
+  static Future<List<Map<String, dynamic>>> getNotifications({
+    int page = 1,
+    int limit = 20,
+    String? type,
+    bool? isRead,
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'page': page.toString(),
+        'limit': limit.toString(),
+      };
+
+      if (type != null) queryParams['type'] = type;
+      if (isRead != null) queryParams['is_read'] = isRead.toString();
+
+      final uri = Uri.parse('$baseUrl/notifications').replace(queryParameters: queryParams);
+
+      final response = await http.get(uri, headers: _getHeaders());
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return List<Map<String, dynamic>>.from(data['notifications'] ?? []);
+      } else {
+        throw _handleError(response);
+      }
+    } catch (error) {
+      print('Failed to load notifications: $error');
+      return [];
+    }
+  }
+
+  static Future<void> markNotificationAsRead(String notificationId) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/notifications/$notificationId/read'),
+        headers: _getHeaders(),
+      );
+
+      if (response.statusCode != 200) {
+        throw _handleError(response);
+      }
+    } catch (error) {
+      print('Failed to mark notification as read: $error');
+    }
+  }
+
+  static Future<void> markAllNotificationsAsRead() async {
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/notifications/read-all'),
+        headers: _getHeaders(),
+      );
+
+      if (response.statusCode != 200) {
+        throw _handleError(response);
+      }
+    } catch (error) {
+      print('Failed to mark all notifications as read: $error');
+    }
+  }
+
+  static Future<int> getUnreadNotificationCount() async {
+    try {
+      final notifications = await getNotifications(page: 1, limit: 100, isRead: false);
+      return notifications.length;
+    } catch (error) {
+      print('Failed to get unread count: $error');
+      return 0;
+    }
+  }
 }

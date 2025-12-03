@@ -11,6 +11,9 @@ import { errorHandler } from './middleware/errorHandler';
 import './models/User';
 import './models/Partner';
 import './models/Product';
+import './models/Order';
+import './models/AnalyticsEvent';
+import './models/Notification';
 
 // Setup model associations
 import { User } from './models/User';
@@ -30,6 +33,7 @@ import authRoutes from './routes/auth';
 import partnerRoutes from './routes/partners';
 import cartRoutes from './routes/cart';
 import orderRoutes from './routes/orders';
+import notificationRoutes from './routes/notifications';
 
 // Load environment variables
 config();
@@ -84,6 +88,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/partners', partnerRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

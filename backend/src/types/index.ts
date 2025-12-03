@@ -50,6 +50,36 @@ export interface Partner {
   is_active: boolean;
   created_at: Date;
   updated_at: Date;
+
+  // Enhanced seller profile fields
+  owner_name?: string;
+  tax_id?: string;
+  bank_details?: {
+    bank_name: string;
+    account_number: string;
+    bik: string;
+  };
+  documents?: {
+    certificate_url?: string;
+    license_url?: string;
+    tax_certificate_url?: string;
+  };
+  settings?: {
+    auto_confirm_orders: boolean;
+    notification_preferences: {
+      new_orders: boolean;
+      low_stock: boolean;
+      reviews: boolean;
+    };
+    commission_rate: number;
+  };
+  stats?: {
+    total_products: number;
+    total_orders: number;
+    total_revenue: number;
+    average_rating: number;
+    products_sold: number;
+  };
 }
 
 export interface Product {
@@ -140,6 +170,20 @@ export interface AnalyticsEvent {
   source: 'web' | 'mobile' | 'api';
   user_agent?: string;
   ip_address?: string;
+}
+
+export interface Notification {
+  id: string;
+  user_id: string;
+  title: string;
+  message: string;
+  type: 'order' | 'product' | 'system' | 'promotion';
+  data?: any;
+  is_read: boolean;
+  priority: 'low' | 'medium' | 'high';
+  expires_at?: Date;
+  created_at: Date;
+  updated_at: Date;
 }
 
 // API Request/Response types

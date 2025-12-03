@@ -145,24 +145,46 @@ CREATE TABLE reviews (
     CONSTRAINT review_target CHECK (product_id IS NOT NULL OR partner_id IS NOT NULL)
 );
 
+-- Notifications table
+-- HCI: Emotional Interaction - User engagement through notifications
+CREATE TABLE notifications (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  title VARCHAR(255) NOT NULL,
+  message TEXT NOT NULL,
+  type VARCHAR(20) NOT NULL CHECK (type IN ('order', 'product', 'system', 'promotion')),
+  data JSONB,
+  is_read BOOLEAN DEFAULT FALSE,
+  priority VARCHAR(10) DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high')),
+  expires_at TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+
+  -- HCI: Cognitive Aspects - Efficient notification queries
+  INDEX idx_notifications_user_read (user_id, is_read),
+  INDEX idx_notifications_user_created (user_id, created_at),
+  INDEX idx_notifications_type (type),
+  INDEX idx_notifications_priority (priority)
+);
+
 -- Analytics events table
 -- HCI: Data Gathering & Data at Scale - Comprehensive user behavior tracking
 CREATE TABLE analytics_events (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
-    event VARCHAR(100) NOT NULL,
-    product_id UUID REFERENCES products(id) ON DELETE SET NULL,
-    order_id UUID REFERENCES orders(id) ON DELETE SET NULL,
-    data JSONB DEFAULT '{}',
-    timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    source VARCHAR(20) DEFAULT 'web' CHECK (source IN ('web', 'mobile', 'api')),
-    user_agent TEXT,
-    ip_address INET,
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  event VARCHAR(100) NOT NULL,
+  product_id UUID REFERENCES products(id) ON DELETE SET NULL,
+  order_id UUID REFERENCES orders(id) ON DELETE SET NULL,
+  data JSONB DEFAULT '{}',
+  timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  source VARCHAR(20) DEFAULT 'web' CHECK (source IN ('web', 'mobile', 'api')),
+  user_agent TEXT,
+  ip_address INET,
 
-    -- HCI: Data at Scale - Optimized for analytics queries
-    INDEX idx_analytics_user_event (user_id, event),
-    INDEX idx_analytics_timestamp (timestamp),
-    INDEX idx_analytics_event (event)
+  -- HCI: Data at Scale - Optimized for analytics queries
+  INDEX idx_analytics_user_event (user_id, event),
+  INDEX idx_analytics_timestamp (timestamp),
+  INDEX idx_analytics_event (event)
 );
 
 -- Indexes for performance

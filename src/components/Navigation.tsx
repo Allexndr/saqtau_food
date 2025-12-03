@@ -18,7 +18,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Divider,
+  Divider, Grid,
 } from '@mui/material'
 import {
   Menu as MenuIcon,
@@ -32,6 +32,14 @@ import {
 } from '@mui/icons-material'
 import { useTranslation } from 'react-i18next'
 import { useCart } from '../hooks/useCart'
+import NotificationCenter from './NotificationCenter'
+
+// Mock auth state - in real app this would come from context/store
+const mockAuth = {
+  isAuthenticated: false,
+  user: null,
+  role: null, // 'user' | 'partner' | 'admin'
+}
 
 const Navigation = () => {
   const navigate = useNavigate()
@@ -43,6 +51,12 @@ const Navigation = () => {
 
   const [mobileOpen, setMobileOpen] = useState(false)
   const [langAnchorEl, setLangAnchorEl] = useState<null | HTMLElement>(null)
+  const [authDialog, setAuthDialog] = useState(false)
+  const [authTab, setAuthTab] = useState(0) // 0 - login, 1 - register
+  const [loginData, setLoginData] = useState({ email: '', password: '', role: 'user' })
+  const [registerData, setRegisterData] = useState({
+    email: '', password: '', confirmPassword: '', firstName: '', lastName: '', phone: '', role: 'user'
+  })
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
@@ -197,24 +211,92 @@ const Navigation = () => {
               <Language />
             </IconButton>
 
-            {/* Cart */}
-            <IconButton
-              color="inherit"
-              onClick={() => navigate('/cart')}
-              sx={{ mr: 1 }}
-            >
-              <Badge badgeContent={cart?.items?.length || 0} color="secondary">
-                <ShoppingCart />
-              </Badge>
-            </IconButton>
+            {mockAuth.isAuthenticated ? (
+              <>
+                {/* Cart - only for buyers */}
+                {mockAuth.role !== 'partner' && (
+                  <IconButton
+                    color="inherit"
+                    onClick={() => navigate('/cart')}
+                    sx={{ mr: 1 }}
+                  >
+                    <Badge badgeContent={cart?.items?.length || 0} color="secondary">
+                      <ShoppingCart />
+                    </Badge>
+                  </IconButton>
+                )}
 
-            {/* Profile */}
-            <IconButton
-              color="inherit"
-              onClick={() => navigate('/profile')}
-            >
-              <Person />
-            </IconButton>
+                {/* Seller Dashboard - only for partners */}
+                {mockAuth.role === 'partner' && (
+                  <Button
+                    color="inherit"
+                    startIcon={<Dashboard />}
+                    onClick={() => navigate('/seller-dashboard')}
+                    sx={{ mr: 1 }}
+                  >
+                    {!isMobile && 'Кабинет'}
+                  </Button>
+                )}
+
+                {/* Notifications */}
+                <NotificationCenter userId={mockAuth.user?.id} />
+
+                {/* Profile */}
+                <IconButton
+                  color="inherit"
+                  onClick={() => navigate('/profile')}
+                >
+                  <Person />
+                </IconButton>
+              </>
+            ) : (
+              <>
+                {/* Cart */}
+                <IconButton
+                  color="inherit"
+                  onClick={() => navigate('/cart')}
+                  sx={{ mr: 1 }}
+                >
+                  <Badge badgeContent={cart?.items?.length || 0} color="secondary">
+                    <ShoppingCart />
+                  </Badge>
+                </IconButton>
+
+                {/* Auth Buttons */}
+                <Button
+                  color="inherit"
+                  startIcon={<Login />}
+                  onClick={() => {
+                    setAuthTab(0);
+                    setAuthDialog(true);
+                  }}
+                  sx={{ mr: 1 }}
+                >
+                  {!isMobile && 'Войти'}
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  startIcon={<Store />}
+                  onClick={() => {
+                    setAuthTab(1);
+                    setRegisterData(prev => ({ ...prev, role: 'partner' }));
+                    setAuthDialog(true);
+                  }}
+                  sx={{
+                    mr: 1,
+                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                    color: 'white',
+                    '&:hover': {
+                      borderColor: 'white',
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    }
+                  }}
+                >
+                  {!isMobile && 'Продавец'}
+                </Button>
+              </>
+            )}
           </Box>
         </Toolbar>
       </AppBar>
@@ -251,6 +333,145 @@ const Navigation = () => {
       >
         {drawer}
       </Drawer>
+
+      {/* Authentication Dialog */}
+      <Dialog
+        open={authDialog}
+        onClose={() => setAuthDialog(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ textAlign: 'center', pb: 1 }}>
+          {authTab === 0 ? '🚪 Вход в систему' : '📝 Регистрация'}
+        </DialogTitle>
+        <DialogContent>
+          <Tabs
+            value={authTab}
+            onChange={(e, newValue) => setAuthTab(newValue)}
+            variant="fullWidth"
+            sx={{ mb: 3 }}
+          >
+            <Tab label="Войти" />
+            <Tab label="Регистрация" />
+          </Tabs>
+
+          {authTab === 0 ? (
+            // Login Tab
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <TextField
+                fullWidth
+                label="Email"
+                type="email"
+                value={loginData.email}
+                onChange={(e) => setLoginData(prev => ({ ...prev, email: e.target.value }))}
+              />
+              <TextField
+                fullWidth
+                label="Пароль"
+                type="password"
+                value={loginData.password}
+                onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
+              />
+              <TextField
+                fullWidth
+                select
+                label="Роль"
+                value={loginData.role}
+                onChange={(e) => setLoginData(prev => ({ ...prev, role: e.target.value }))}
+              >
+                <MenuItem value="user">👤 Покупатель</MenuItem>
+                <MenuItem value="partner">🏪 Продавец</MenuItem>
+              </TextField>
+            </Box>
+          ) : (
+            // Register Tab
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Имя"
+                    value={registerData.firstName}
+                    onChange={(e) => setRegisterData(prev => ({ ...prev, firstName: e.target.value }))}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Фамилия"
+                    value={registerData.lastName}
+                    onChange={(e) => setRegisterData(prev => ({ ...prev, lastName: e.target.value }))}
+                  />
+                </Grid>
+              </Grid>
+              <TextField
+                fullWidth
+                label="Email"
+                type="email"
+                value={registerData.email}
+                onChange={(e) => setRegisterData(prev => ({ ...prev, email: e.target.value }))}
+              />
+              <TextField
+                fullWidth
+                label="Телефон"
+                value={registerData.phone}
+                onChange={(e) => setRegisterData(prev => ({ ...prev, phone: e.target.value }))}
+              />
+              <TextField
+                fullWidth
+                select
+                label="Тип аккаунта"
+                value={registerData.role}
+                onChange={(e) => setRegisterData(prev => ({ ...prev, role: e.target.value }))}
+              >
+                <MenuItem value="user">👤 Покупатель</MenuItem>
+                <MenuItem value="partner">🏪 Продавец</MenuItem>
+              </TextField>
+              <TextField
+                fullWidth
+                label="Пароль"
+                type="password"
+                value={registerData.password}
+                onChange={(e) => setRegisterData(prev => ({ ...prev, password: e.target.value }))}
+              />
+              <TextField
+                fullWidth
+                label="Подтвердите пароль"
+                type="password"
+                value={registerData.confirmPassword}
+                onChange={(e) => setRegisterData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+              />
+
+              {registerData.role === 'partner' && (
+                <Alert severity="info" sx={{ mt: 1 }}>
+                  Для регистрации продавца потребуется верификация документов и бизнес-информации.
+                </Alert>
+              )}
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button onClick={() => setAuthDialog(false)}>
+            Отмена
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              // Mock authentication - in real app would call API
+              if (authTab === 0) {
+                // Mock login success
+                alert(`Вход выполнен как ${loginData.role === 'partner' ? 'продавец' : 'покупатель'}`);
+              } else {
+                // Mock registration success
+                alert(`Регистрация выполнена как ${registerData.role === 'partner' ? 'продавец' : 'покупатель'}`);
+              }
+              setAuthDialog(false);
+            }}
+          >
+            {authTab === 0 ? 'Войти' : 'Зарегистрироваться'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }

@@ -6,11 +6,16 @@ import 'providers/auth_provider.dart';
 import 'providers/product_provider.dart';
 import 'providers/cart_provider.dart';
 import 'screens/home_screen.dart';
+import 'screens/seller_dashboard_screen.dart';
+import 'services/notification_service.dart';
 import 'localization/app_localizations.dart';
 
 // HCI: Interaction Design - App entry point with proper provider setup
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize notifications
+  await NotificationService.initialize();
 
   // Initialize Firebase for push notifications
   await Firebase.initializeApp();
@@ -18,8 +23,31 @@ void main() async {
   runApp(const SaqtauApp());
 }
 
-class SaqtauApp extends StatelessWidget {
+class SaqtauApp extends StatefulWidget {
   const SaqtauApp({super.key});
+
+  @override
+  State<SaqtauApp> createState() => _SaqtauAppState();
+}
+
+class _SaqtauAppState extends State<SaqtauApp> {
+  int _currentIndex = 0;
+
+  // Mock authentication state - in real app this would come from secure storage
+  bool _isAuthenticated = false;
+  String _userRole = 'user'; // 'user' or 'partner'
+
+  final List<Widget> _buyerScreens = [
+    const HomeScreen(),
+    const Placeholder(), // Search screen
+    const Placeholder(), // Cart screen
+    const Placeholder(), // Profile screen
+  ];
+
+  final List<Widget> _sellerScreens = [
+    const HomeScreen(),
+    const SellerDashboardScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +81,56 @@ class SaqtauApp extends StatelessWidget {
           Locale('en', ''), // English
         ],
 
-        home: const AppInitializer(),
+        home: const HomeScreen(), // For demo - in real app would check auth state
         debugShowCheckedModeBanner: false,
+      ),
+    );
+  }
+
+  Widget _buildBuyerInterface() {
+    return Scaffold(
+      body: _buyerScreens[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) => setState(() => _currentIndex = index),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Главная',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Поиск',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Корзина',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Профиль',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSellerInterface() {
+    return Scaffold(
+      body: _sellerScreens[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) => setState(() => _currentIndex = index),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Главная',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard),
+            label: 'Кабинет',
+          ),
+        ],
       ),
     );
   }

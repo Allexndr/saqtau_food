@@ -10,6 +10,7 @@ import PartnersPage from './pages/PartnersPage'
 import CheckoutPage from './pages/CheckoutPage'
 import OrderSuccessPage from './pages/OrderSuccessPage'
 import PartnerPanel from './pages/PartnerPanel'
+import SellerDashboard from './pages/SellerDashboard'
 import './App.css'
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/partners" element={<PartnersPage />} />
           <Route path="/partner-panel" element={<PartnerPanel />} />
+          <Route path="/seller-dashboard" element={<SellerDashboard />} />
         </Routes>
       </Box>
     </Box>

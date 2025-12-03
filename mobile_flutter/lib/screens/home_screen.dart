@@ -7,6 +7,9 @@ import '../providers/cart_provider.dart';
 import '../widgets/product_card.dart';
 import '../widgets/category_filter.dart';
 import '../widgets/search_bar.dart';
+import '../widgets/notification_center.dart';
+import 'auth_screen.dart';
+import 'seller_dashboard_screen.dart';
 
 // HCI: Interaction Design - Main home screen with product discovery
 class HomeScreen extends StatefulWidget {
@@ -57,6 +60,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('🍎 Saqtau Platform'),
+        actions: [
+          const NotificationCenter(),
+          IconButton(
+            icon: const Icon(Icons.store),
+            onPressed: () => _showAuthDialog(context, 'partner'),
+            tooltip: 'Войти как продавец',
+          ),
+          IconButton(
+            icon: const Icon(Icons.login),
+            onPressed: () => _showAuthDialog(context, 'user'),
+            tooltip: 'Войти как покупатель',
+          ),
+        ],
+      ),
       body: SafeArea(
         child: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
