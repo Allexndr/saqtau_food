@@ -15,17 +15,8 @@ import './models/Order';
 import './models/AnalyticsEvent';
 import './models/Notification';
 
-// Setup model associations
-import { User } from './models/User';
-import { Partner } from './models/Partner';
-import { Product } from './models/Product';
-
-// HCI: Data at Scale - Define model relationships
-User.hasMany(Product, { foreignKey: 'partner_id', as: 'products' });
-Product.belongsTo(User, { foreignKey: 'partner_id', as: 'partner' });
-
-Partner.hasMany(Product, { foreignKey: 'partner_id', as: 'products' });
-Product.belongsTo(Partner, { foreignKey: 'partner_id', as: 'Partner' });
+// Setup model associations after models are imported
+import './models/associations';
 
 // Routes
 import productRoutes from './routes/products';
@@ -111,7 +102,7 @@ const startServer = async () => {
 
     // Sync database (in production, use migrations)
     if (process.env.NODE_ENV !== 'production') {
-      await sequelize.sync({ alter: true });
+      await sequelize.sync({ force: false, alter: true });
       logger.info('Database synchronized successfully.');
     }
 

@@ -67,7 +67,7 @@ User.init(
       },
     },
     is_verified: {
-      type: DataTypes.BOOLEAN,
+      type: Boolean,
       defaultValue: false,
     },
   },
